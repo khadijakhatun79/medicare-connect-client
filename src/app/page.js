@@ -11,7 +11,11 @@ export default function Home() {
     <div className="flex flex-col min-h-screen"> 
       <Hero />
      
-     
+       <FeaturedAppointment></FeaturedAppointment> 
+      <Features />
+      <AppointmentBooking></AppointmentBooking>
+      <Testimonial></Testimonial>
+      <TopBrands></TopBrands>
     </div>
   );
 }

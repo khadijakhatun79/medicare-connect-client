@@ -1,13 +1,18 @@
-import { Search } from "lucide-react";
+
+import Image from "next/image";
 
 const NotFound = () => {
     return (
         <div className="col-span-full py-24 text-center space-y-4">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground">
-                <Search className="w-10 h-10" />
+            <div className="flex items-center justify-center mx-auto text-muted-foreground">
+              <Image
+                         src="/assets/error-404.png"  width={676}
+            height={401}
+                         alt="error-404" 
+                       />
             </div>
-            <h3 className="text-xl font-bold">No courses found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filters.</p>
+            <h3 className="text-xl font-bold">Oops! That Page Can’t Be Found.</h3>
+            <p className="text-muted-foreground">The page you are looking for was never existed.</p>
         </div>
     );
 };
