@@ -1,0 +1,146 @@
+[
+  {
+    "id": "d1",
+    "name": "Dr. Ayesha Rahman",
+    "specialty": "Cardiologist",
+    "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2",
+    "experience": "10 years",
+    "availability": [
+      "09:00 AM - 12:00 PM",
+      "04:00 PM - 07:00 PM"
+    ],
+    "description": "Highly experienced cardiologist specializing in heart diseases, preventive care, and patient-centered treatment.",
+    "hospital": "Labaid Cardiac Hospital",
+    "location": "Dhanmondi, Dhaka",
+    "fee": 800,
+    "rating": 4.9
+  },
+  {
+    "id": "d2",
+    "name": "Dr. Tanvir Hasan",
+    "specialty": "Neurologist",
+    "image": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d",
+    "experience": "12 years",
+    "availability": [
+      "10:00 AM - 01:00 PM",
+      "05:00 PM - 08:00 PM"
+    ],
+    "description": "Expert neurologist focused on brain, spinal cord, and nervous system disorders.",
+    "hospital": "Square Hospital",
+    "location": "Panthapath, Dhaka",
+    "fee": 1000,
+    "rating": 4.8
+  },
+  {
+    "id": "d3",
+    "name": "Dr. Nusrat Jahan",
+    "specialty": "Dermatologist",
+    "image": "https://images.unsplash.com/photo-1594824476967-48c8b964273f",
+    "experience": "8 years",
+    "availability": [
+      "11:00 AM - 02:00 PM",
+      "06:00 PM - 09:00 PM"
+    ],
+    "description": "Specialist in skin care, acne treatment, and cosmetic dermatology.",
+    "hospital": "United Hospital",
+    "location": "Gulshan, Dhaka",
+    "fee": 700,
+    "rating": 4.7
+  },
+  {
+    "id": "d4",
+    "name": "Dr. Mahmudul Karim",
+    "specialty": "Orthopedic Surgeon",
+    "image": "https://images.unsplash.com/photo-1537368910025-700350fe46c7",
+    "experience": "15 years",
+    "availability": [
+      "08:00 AM - 11:00 AM",
+      "03:00 PM - 06:00 PM"
+    ],
+    "description": "Experienced orthopedic surgeon treating bone and joint problems.",
+    "hospital": "Evercare Hospital",
+    "location": "Bashundhara, Dhaka",
+    "fee": 1200,
+    "rating": 4.9
+  },
+  {
+    "id": "d5",
+    "name": "Dr. Farzana Islam",
+    "specialty": "Pediatrician",
+    "image": "https://images.unsplash.com/photo-1651008376811-b90baee60c1f",
+    "experience": "9 years",
+    "availability": [
+      "09:30 AM - 12:30 PM",
+      "04:00 PM - 07:00 PM"
+    ],
+    "description": "Dedicated child specialist providing complete pediatric healthcare.",
+    "hospital": "Popular Diagnostic Center",
+    "location": "Mirpur, Dhaka",
+    "fee": 600,
+    "rating": 4.6
+  },
+  {
+    "id": "d6",
+    "name": "Dr. Rakib Ahmed",
+    "specialty": "ENT Specialist",
+    "image": "https://images.unsplash.com/photo-1622253692010-333f2da6031d",
+    "experience": "11 years",
+    "availability": [
+      "10:00 AM - 01:00 PM",
+      "05:00 PM - 08:00 PM"
+    ],
+    "description": "Specialized in ear, nose, and throat diseases and surgery.",
+    "hospital": "Ibn Sina Hospital",
+    "location": "Dhanmondi, Dhaka",
+    "fee": 750,
+    "rating": 4.5
+  },
+  {
+    "id": "d7",
+    "name": "Dr. Samia Kabir",
+    "specialty": "Gynecologist",
+    "image": "https://images.unsplash.com/photo-1582750433449-648ed127bb54",
+    "experience": "13 years",
+    "availability": [
+      "09:00 AM - 12:00 PM",
+      "04:00 PM - 06:00 PM"
+    ],
+    "description": "Expert in women's reproductive health and pregnancy care.",
+    "hospital": "Anwer Khan Modern Hospital",
+    "location": "Lalmatia, Dhaka",
+    "fee": 950,
+    "rating": 4.8
+  },
+  {
+    "id": "d8",
+    "name": "Dr. Fahim Chowdhury",
+    "specialty": "Psychiatrist",
+    "image": "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47",
+    "experience": "7 years",
+    "availability": [
+      "02:00 PM - 05:00 PM",
+      "07:00 PM - 09:00 PM"
+    ],
+    "description": "Provides mental health counseling and psychiatric treatment.",
+    "hospital": "Bangladesh Specialized Hospital",
+    "location": "Shyamoli, Dhaka",
+    "fee": 850,
+    "rating": 4.7
+  },
+  {
+    "id": "d9",
+    "name": "Dr. Mehedi Hasan",
+    "specialty": "General Physician",
+    "image": "https://images.unsplash.com/photo-1584515933487-779824d29309",
+    "experience": "6 years",
+    "availability": [
+      "08:00 AM - 11:00 AM",
+      "05:00 PM - 08:00 PM"
+    ],
+    "description": "General physician focused on primary healthcare and preventive medicine.",
+    "hospital": "Green Life Hospital",
+    "location": "Green Road, Dhaka",
+    "fee": 500,
+    "rating": 4.4
+  }
+]
