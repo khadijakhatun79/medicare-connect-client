@@ -1,11 +1,14 @@
 import { Jost } from "next/font/google";
 import "./globals.css";
+import { MainNavbar } from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { Toaster } from 'react-hot-toast';
 
 const jost = Jost({
   subsets: ["latin"],
   variable: "--font-jost",
 });
-
+ 
 export const metadata = {
   title: {
     default:
@@ -24,7 +27,10 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col text-slate-900 font-sans">
+              <MainNavbar />
         <main className="grow">{children}</main> 
+         <Footer />
+        <Toaster />
         
       </body>
     </html>
