@@ -91,7 +91,7 @@ export function MainNavbar() {
 
           {!isPending && !session ? (
             <>
-              <Link href="/login">Login</Link>
+              <Link href="/login"><button className="text-white">Login</button></Link>
 
               <Link href="/register">
                 <Button className="bg-[#132573] text-white rounded-full px-6">

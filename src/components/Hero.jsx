@@ -41,11 +41,11 @@ export default function Hero() {
             </p>
 
             {/* BUTTONS FIXED */}
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex flex-wrap gap-4 pt-2">  
 
               <button
                 id="btn-banner-cta"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-sm px-6 py-3.5 rounded-2xl transition flex items-center gap-2 group shadow-lg shadow-emerald-500/20"
+                className="bg-white text-[#00001b] font-extrabold text-sm px-6 py-3.5 rounded-2xl transition flex items-center gap-2 group shadow-lg shadow-emerald-500/20"
               >
                 <span>Find a Specialist</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -72,22 +72,16 @@ export default function Hero() {
           <div className="relative lg:col-span-5 h-[500px] lg:h-[650px] w-full flex items-end justify-center lg:justify-end">
 
             {/* BADGE 1 */}
-            <div className="absolute top-[25%] left-[-20px] lg:left-0 z-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-[2rem] px-5 py-6 text-white text-center shadow-xl w-28 flex flex-col items-center transition-transform hover:scale-105">
+            <div className="absolute top-[25%] left-[-20px] lg:left-0 z-20 bg-white/10 backdrop-blur-md rounded-[2rem] px-5 py-6 text-white text-center shadow-xl w-28 flex flex-col items-center transition-transform hover:scale-105">
 
               <div className="flex -space-x-2 mb-2">
+              
                 <Image
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"
-                  alt="doctor 1"
-                  width={24}
-                  height={24}
-                  className="rounded-full object-cover border border-white"
-                />
-                <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100"
+                  src="/assets/doctor_group_1.png"
                   alt="doctor 2"
-                  width={24}
-                  height={24}
-                  className="rounded-full object-cover border border-white"
+                  width={84}
+                  height={54}
+                  className="rounded-full object-cover"
                 />
               </div>
 
@@ -102,9 +96,9 @@ export default function Hero() {
                 <Image
                   src="/assets/user1.jpg"
                   alt="patient"
-                  width={40}
-                  height={40}
-                  className="rounded-full border-2 border-white object-cover"
+                  width={160}
+                  height={70}
+                  className="rounded-full object-cover"
                 />
               </div>
 
