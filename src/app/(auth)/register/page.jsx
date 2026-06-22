@@ -1,151 +1,261 @@
-'use client';
+"use client";
 
-import { Button, Input } from '@heroui/react';
+import { useState } from "react";
+import {
+  Card,
+  Button,
+  Link,
+  TextField,
+  Label,
+  InputGroup,
+  Input,
+  Radio,
+  RadioGroup,
+} from "@heroui/react";
 
-import Link from 'next/link';
-import { User, Mail, Lock, ArrowRight } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { signUp } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
-import Breadcrumb from '@/components/Breadcrumb';
+import { Eye, EyeSlash, Person, At, ShieldKeyhole } from "@gravity-ui/icons";
 
-export default function Register() {
-    const router = useRouter();
+import { signUp } from "@/lib/auth-client";
+import Breadcrumb from "@/components/Breadcrumb";
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        // console.log(e.currentTarget);
+export default function SignupPage() {
+  // Form state
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("patient");
 
-        const formData = new FormData(e.currentTarget)
-        // console.log(formData);
+  // UI state
+  const [isVisible, setIsVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-        const registerData = Object.fromEntries(formData.entries());
+  const toggleVisibility = () => setIsVisible(!isVisible);
 
-        const { data, error } = await signUp.email({
-            ...registerData
-        })
+  // Password validation
+  const passwordRegex =
+    /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
 
-        if (error) {
-            toast.error("Registration failed")
-            return;
-        }
-        router.push("/")
+  const handleSignup = async (e) => {
+    e.preventDefault();
 
+    setError("");
+    setSuccess("");
+    setIsLoading(true);
+
+    try {
+      // validation
+      if (!name || !email || !password) {
+        setError("All required fields must be filled.");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!passwordRegex.test(password)) {
+        setError(
+          "Password must be 6+ chars with 1 number & 1 special character"
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        setError("Passwords do not match");
+        setIsLoading(false);
+        return;
+      }
+
+      // Auth signup
+      const { data, error: authError } = await signUp.email({
+        email,
+        password,
+        name,
+        image: photo,
+        role,
+        callbackURL: "/",
+      });
+
+      if (authError) {
+        setError(authError.message || "Signup failed");
+        setIsLoading(false);
+        return;
+      }
+
+      // Save user in DB (IMPORTANT for your assignment)
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          photo,
+          role,
+          status: role === "doctor" ? "pending" : "active",
+          createdAt: new Date(),
+        }),
+      });
+
+      setSuccess("Account created successfully!");
+
+      // reset
+      setName("");
+      setEmail("");
+      setPhoto("");
+      setPassword("");
+      setConfirmPassword("");
+      setRole("patient");
+    } catch (err) {
+      setError("Unexpected error occurred. Try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+  <Breadcrumb></Breadcrumb>
 
-    return (
-        <div className="min-h-[80vh] flex flex-col">
-        
-    <Breadcrumb></Breadcrumb>
-            <div className="grow flex items-center justify-center p-4">
-                <div className="w-full max-w-md">
-                    <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200 shadow-2xl space-y-8 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+  return (
+    <div>
+    <Breadcrumb />
+    
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
+      
+      <Card className="w-full max-w-md p-6 shadow-sm border border-zinc-200 dark:border-zinc-800">
 
-                        <div className="text-center space-y-2 relative">
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-                                Join <span className="text-[#132573]">DocAppoint</span>
-                            </h2>
-                            <p className="text-slate-500 font-medium">Create your account to start learning</p>
-                        </div>  
-
-                        <form
-                            className="space-y-6"
-                            onSubmit={handleRegister}
-                        >
-                            <div className="space-y-2">
-                                <label
-                                    htmlFor="name"
-                                    className="text-sm font-bold text-slate-700 ml-1"
-                                >
-                                    Full Name
-                                </label>
-                                <Input
-                                    id="name"
-                                    required
-                                    placeholder="Enter your name"
-                                    name="name"
-                                  
-                                    className="border-2 border-slate-200 hover:border-blue-600/50 focus-within:border-[#132573] transition-all duration-300 h-14 bg-white w-full rounded-2xl"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label
-                                    htmlFor="email"
-                                    className="text-sm font-bold text-slate-700 ml-1"
-                                >
-                                    Email Address
-                                </label>
-                                <Input
-                                    id="email"
-                                    required
-                                    placeholder="Enter your email"
-                                    type="email"
-                                    name="email"
-                               
-                                    className="border-2 border-slate-200 hover:border-blue-600/50 focus-within:border-[#132573] transition-all duration-300 h-14 bg-white w-full rounded-2xl"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label
-                                    htmlFor="image"
-                                    className="text-sm font-bold text-slate-700 ml-1"
-                                >
-                                    Profile Image URL
-                                </label>
-                                <Input
-                                    id="image"
-                                    placeholder="https://images.unsplash.com/..."
-                                    type="url"
-                                    name="image"
-                                  
-                                    className="border-2 border-slate-200 hover:border-blue-600/50 focus-within:border-[#132573] transition-all duration-300 h-14 bg-white w-full rounded-2xl"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label
-                                    htmlFor="password"
-                                    className="text-sm font-bold text-slate-700 ml-1"
-                                >
-                                    Password
-                                </label>
-                                <Input
-                                    id="password"
-                                    required
-                                    placeholder="••••••••"
-                                    type="password"
-                                    name="password"
-                                
-                                    className="border-2 border-slate-200 hover:border-blue-600/50 focus-within:border-[#132573] transition-all duration-300 h-14 bg-white w-full rounded-2xl"
-                                />
-                            </div>
-
-                            <Button
-                                color="primary"
-                                type="submit"
-                                className="w-full h-14 text-lg font-black rounded-2xl bg-[#132573] group"
-                            >
-                                Create Account <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                            </Button>
-                        </form>
-
-                        <div className="text-center pt-2">
-                            <p className="text-sm text-slate-500 font-medium">
-                                Already have an account?{' '}
-                                <Link
-                                    href="/login"
-                                    className="text-[#132573] font-black hover:underline underline-offset-4 transition-all"
-                                >
-                                    Sign in
-                                </Link>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        {/* Header */}
+        <div className="text-center pb-5 border-b mb-5">
+          <h1 className="text-2xl font-semibold">
+            Create Account
+          </h1>
+          <p className="text-sm text-gray-500">
+            Join MediCare Connect
+          </p>
         </div>
-    );
+
+        <form onSubmit={handleSignup} className="flex flex-col gap-4">
+
+          {/* Name */}
+          <TextField isRequired>
+            <Label>Name</Label>
+            <InputGroup>
+              <Person size={16} />
+              <Input
+                placeholder="Full Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </InputGroup>
+          </TextField>
+
+          {/* Email */}
+          <TextField isRequired>
+            <Label>Email</Label>
+            <InputGroup>
+              <At size={16} />
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </InputGroup>
+          </TextField>
+
+          {/* Photo */}
+          <TextField>
+            <Label>Photo URL</Label>
+            <Input
+              type="url"
+              placeholder="https://..."
+              value={photo}
+              onChange={(e) => setPhoto(e.target.value)}
+            />
+          </TextField>
+
+          {/* Password */}
+          <TextField isRequired>
+            <Label>Password</Label>
+            <InputGroup>
+              <ShieldKeyhole size={16} />
+              <Input
+                type={isVisible ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button type="button" onClick={toggleVisibility}>
+                {isVisible ? <EyeSlash /> : <Eye />}
+              </button>
+            </InputGroup>
+          </TextField>
+
+          {/* Confirm Password */}
+          <TextField isRequired>
+            <Label>Confirm Password</Label>
+            <Input
+              type={isVisible ? "text" : "password"}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </TextField>
+
+          {/* Role */}
+          <div className="flex flex-col gap-4"> 
+                        <RadioGroup defaultValue="patient" name="rule" onChange={value => setRole(value)} orientation="horizontal">
+                            <Radio selected value="patient">
+                            <Radio.Control>
+                                <Radio.Indicator />
+                            </Radio.Control>
+                            <Radio.Content>
+                                <Label>Patient</Label>
+                            </Radio.Content>
+                            </Radio>
+                            <Radio value="doctor">
+                            <Radio.Control>
+                                <Radio.Indicator />
+                            </Radio.Control>
+                            <Radio.Content>
+                                <Label>Doctor</Label>
+                            </Radio.Content>
+                            </Radio>
+                           
+                        </RadioGroup>
+                        </div>
+
+          {/* Error */}
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
+
+          {/* Success */}
+          {success && (
+            <p className="text-green-500 text-sm">{success}</p>
+          )}
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            isLoading={isLoading}
+            className="w-full"
+            color="primary"
+          >
+            Create Account
+          </Button>
+
+          {/* Login link */}
+          <p className="text-center text-sm">
+            Already have account?{" "}
+            <Link href="/login">Login</Link>
+          </p>
+
+        </form>
+      </Card>
+    </div>
+
+    </div>
+  );
 }

@@ -1,21 +1,21 @@
 
 import AppointmentBooking from '@/components/AppointmentBooking';
-import FeaturedAppointment from '@/components/FeaturedAppointment';
+import FeaturedAppointment from '@/components/FeaturedDoctors';
 import Features from '@/components/Features';
 import Hero from '@/components/Hero';
 import Testimonial from '@/components/Testimonial';
-import TopBrands from '@/components/TopBrands';
+import About from '@/components/About';
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen"> 
       <Hero />
+      <Features />
+      <About></About>
      
        <FeaturedAppointment></FeaturedAppointment> 
-      <Features />
       <AppointmentBooking></AppointmentBooking>
       <Testimonial></Testimonial>
-      <TopBrands></TopBrands>
     </div>
   );
 }

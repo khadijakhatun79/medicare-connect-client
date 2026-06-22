@@ -1,15 +1,39 @@
-export const fetchAppointments = async (search = "") => {
-  console.log();
+const API = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointment?search=${search}`);
-  const data = await res.json();
-  return data || [];
+/* ================= APPOINTMENTS ================= */
+export const fetchAppointments = async (email = "") => {
+  try {
+    const res = await fetch(
+      `${API}/appointments?email=${email}`
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch appointments");
+    }
+
+    const data = await res.json();
+    return data || [];
+  } catch (error) {
+    console.log("fetchAppointments error:", error);
+    return [];
+  }
 };
 
+/* ================= FEATURED DOCTORS ================= */
 export const fetchFeaturedAppointment = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/featured`);
-  const data = await res.json();
-  return data || [];
-};
+  try {
+    const res = await fetch(
+      `${API}/featured-doctors`
+    );
 
- 
+    if (!res.ok) {
+      throw new Error("Failed to fetch featured doctors");
+    }
+
+    const data = await res.json();
+    return data || [];
+  } catch (error) {
+    console.log("fetchFeaturedAppointment error:", error);
+    return [];
+  }
+};

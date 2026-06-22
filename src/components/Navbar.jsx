@@ -95,7 +95,7 @@ export function MainNavbar() {
 
               <Link href="/register">
                 <Button className="bg-[#132573] text-white rounded-full px-6">
-                  Register
+                 Join Us
                 </Button>
               </Link>
             </>
@@ -121,7 +121,7 @@ export function MainNavbar() {
               </div>
 
               {/* DROPDOWN */}
-              <div className="absolute right-0 top-12 hidden group-hover:flex flex-col bg-white shadow-xl rounded-xl w-52 overflow-hidden">
+              <div className="absolute right-0 top-8 hidden group-hover:flex flex-col bg-white shadow-xl rounded-xl w-52 overflow-hidden">
 
                 <Link
                   href="/profile"

@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen bg-[#0d1b40] overflow-hidden flex items-center">
+    <section className="relative min-h-screen overflow-hidden flex items-center">
 
       {/* Background */}
       <div className="absolute inset-0 z-0">
@@ -13,10 +13,16 @@ export default function Hero() {
           alt="Background"
           fill
           priority
-          className="object-cover object-center opacity-40 mix-blend-overlay blur-[1px]"
+          className="object-cover object-center"
         />
 
-        <div className="absolute inset-0 bg-[linear-gradient(270deg,transparent_25%,#132573_55.11%)] opacity-95"></div>
+        <div
+            className="absolute inset-0 z-10 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(270deg, transparent 25%, rgba(19, 37, 115, 0.95) 55.11%)",
+            }}
+          ></div>
       </div>
 
       {/* Content */}

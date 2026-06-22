@@ -1,79 +1,103 @@
-import { Award, Clock, Users, ShieldCheck } from "lucide-react";
 
-const ChooseSection = () => {
-  const items = [
-    {
-      icon: Users,
-      title: "Expert Doctors",
-      desc: "Highly qualified and experienced medical professionals.",
-    },
-    {
-      icon: Clock,
-      title: "24/7 Service",
-      desc: "Get medical support anytime, anywhere without delay.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Safe & Trusted",
-      desc: "Secure booking system with verified doctors only.",
-    },
-    {
-      icon: Award,
-      title: "Best Care",
-      desc: "We ensure top-quality healthcare for every patient.",
-    },
-  ];
+"use client";
 
+import Link from "next/link";
+
+const specializations = [
+  {
+    title: "Cardiology",
+    description: "Heart and cardiovascular care by experienced specialists.",
+    icon: "/assets/department_icon_1.svg",
+    href: "#",
+  },
+  {
+    title: "Neurology",
+    description: "Diagnosis and treatment of brain and nervous system disorders.",
+    icon: "/assets/department_icon_2.svg",
+    href: "#",
+  },
+  {
+    title: "Orthopedics",
+    description: "Comprehensive care for bones, joints, and muscles.",
+    icon: "/assets/department_icon_3.svg",
+    href: "#",
+  },
+  {
+    title: "Pediatrics",
+    description: "Specialized healthcare services for infants and children.",
+    icon: "/assets/department_icon_4.svg",
+    href: "#",
+  },
+  {
+    title: "Dermatology",
+    description: "Expert treatment for skin, hair, and nail conditions.",
+    icon: "/assets/department_icon_5.svg",
+    href: "#",
+  },
+  {
+    title: "General Medicine",
+    description: "Primary healthcare services for everyday medical needs.",
+    icon: "/assets/department_icon_6.svg",
+    href: "#",
+  },
+];
+
+export default function DepartmentSection() {
   return (
-    <section className="relative py-24 bg-slate-50 overflow-hidden">
-
+    <section className="py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-
-        {/* TITLE */}
-        <div className="text-center mb-16">
-          <p className="text-[#132573] font-bold tracking-widest uppercase text-sm">
-            Why Choose Us
+        {/* Heading */}
+        <div className="text-center">
+          <p className="text-[#132573] font-semibold tracking-widest uppercase text-sm">
+            Medical Specializations
           </p>
 
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mt-3">
-            Exceptional Care for Every Patient
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mt-3 leading-tight">
+            Our Medical{" "}
+            <span className="text-[#132573]">Specializations</span>
           </h2>
 
-          <p className="text-slate-500 mt-4 max-w-2xl mx-auto">
-            We provide trusted healthcare services with expert doctors,
-            modern facilities, and 24/7 support.
+          <p className="mt-5 max-w-3xl mx-auto text-slate-600 text-base md:text-lg">
+            Access expert healthcare services across multiple specialties with
+            experienced and verified medical professionals dedicated to
+            providing quality care for your health and well-being.
           </p>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-
-          {items.map((item, i) => (
-            <div
+        {/* Cards */}
+        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {specializations.map((item, i) => (
+            <Link
               key={i}
-              className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition duration-300 hover:-translate-y-1 border"
+              href={item.href}
+              className="group relative bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
             >
-
-              <div className="w-14 h-14 rounded-2xl bg-[#132573]/10 flex items-center justify-center mb-4">
-                <item.icon className="w-7 h-7 text-[#132573]" />
+              {/* Icon */}
+              <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-[#132573]/10 mb-5">
+                <img
+                  src={item.icon}
+                  alt={item.title}
+                  className="w-7 h-7"
+                />
               </div>
 
-              <h3 className="text-xl font-bold text-slate-900">
+              {/* Title */}
+              <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#132573] transition-colors">
                 {item.title}
               </h3>
 
-              <p className="text-slate-500 mt-2">
-                {item.desc}
+              {/* Description */}
+              <p className="mt-3 text-slate-500 text-sm leading-relaxed">
+                {item.description}
               </p>
 
-            </div>
+              {/* Hover Effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-r from-transparent to-[#132573]/5" />
+            </Link>
           ))}
-
         </div>
-
       </div>
     </section>
   );
-};
+}
 
-export default ChooseSection;
