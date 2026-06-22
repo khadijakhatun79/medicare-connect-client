@@ -8,7 +8,7 @@ const Breadcrumb = () => {
   const pathSegments = pathname.split("/").filter(Boolean);
 
   return (
-    <div className="relative bg-[url('/assets/breadcumb-bg.jpg')] bg-cover bg-center min-h-[445px] pt-[150px] pb-[70px] mb-6">
+    <div className="relative bg-[url('/assets/breadcumb-bg.jpg')] bg-cover bg-center min-h-[445px] pt-[150px] pb-[70px]">
       
       {/* Fixed Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(-90deg,transparent_25%,#132573_55.11%)]"></div>
