@@ -4,15 +4,17 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 export const fetchAppointments = async (email = "") => {
   try {
     const res = await fetch(
-      `${API}/appointments?email=${email}`
+      `${API}/appointments?email=${email}`,
+      {
+        cache: "no-store",
+      }
     );
 
     if (!res.ok) {
       throw new Error("Failed to fetch appointments");
     }
 
-    const data = await res.json();
-    return data || [];
+    return await res.json();
   } catch (error) {
     console.log("fetchAppointments error:", error);
     return [];
@@ -23,17 +25,40 @@ export const fetchAppointments = async (email = "") => {
 export const fetchFeaturedAppointment = async () => {
   try {
     const res = await fetch(
-      `${API}/featured-doctors`
+      `${API}/featured-doctors`,
+      {
+        cache: "no-store",
+      }
     );
 
     if (!res.ok) {
       throw new Error("Failed to fetch featured doctors");
     }
 
-    const data = await res.json();
-    return data || [];
+    return await res.json();
   } catch (error) {
     console.log("fetchFeaturedAppointment error:", error);
     return [];
+  }
+};
+
+/* ================= DOCTOR DETAILS ================= */
+export const fetchDoctorDetails = async (id) => {
+  try {
+    const res = await fetch(
+      `${API}/doctors/${id}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch doctor details");
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.log("fetchDoctorDetails error:", error);
+    return null;
   }
 };

@@ -1,187 +1,213 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Button,
-  Modal,
-} from "@heroui/react";
-
+import { useEffect, useState } from "react";
+import { Button, Modal } from "@heroui/react";
 import toast from "react-hot-toast";
-import { Phone, Play } from "lucide-react";
 
-export default function AppointmentBooking() {
+export default function AppointmentBooking({ doctor }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
     email: "",
-    location: "",
-    doctor: "",
-    department: "",
     message: "",
     agree: false,
+    doctor: "",
   });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  const handleSubmit = (e) => {
+  /* ================= AUTO FILL ================= */
+  useEffect(() => {
+    if (!doctor?.doctorName) return;
+
+    setForm((prev) => ({
+      ...prev,
+      doctor: doctor.doctorName,
+    }));
+  }, [doctor]);
+
+  return null;
+}
+
+  /* ================= SUBMIT ================= */
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.doctor) {
-      toast.error("Please fill all required fields");
+    if (!form.name || !form.email) {
+      toast.error("Please fill required fields");
       return;
     }
 
     if (!form.agree) {
-      toast.error("You must agree to Terms & Privacy Policy");
+      toast.error("You must agree to terms");
       return;
     }
 
-    toast.success("Appointment booked successfully!");
+    try {
+      /* ================= TOKEN ================= */
+      const token = localStorage.getItem("token");
 
-    setForm({
-      name: "",
-      email: "",
-      location: "",
-      doctor: "",
-      department: "",
-      message: "",
-      agree: false,
-    });
+      /* ================= 1. CREATE APPOINTMENT ================= */
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/appointments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            doctorId: doctor._id,
+            doctorName: doctor.doctorName,
+            patientName: form.name,
+            email: form.email,
+            message: form.message,
+            status: "pending",
+            paymentStatus: "unpaid",
+          }),
+        }
+      );
 
-    closeModal();
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error("Appointment failed");
+        return;
+      }
+
+      const appointmentId = data.insertedId || data._id;
+
+      /* ================= 2. STRIPE CHECKOUT ================= */
+      const paymentRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            appointmentId,
+            doctorName: doctor.doctorName,
+            fee: doctor.consultationFee,
+          }),
+        }
+      );
+
+      const paymentData = await paymentRes.json();
+
+      if (paymentData?.url) {
+        window.location.href = paymentData.url;
+      } else {
+        toast.error("Payment session failed");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
   };
 
   return (
-    <div className="">
+    <div>
 
-      {/* OPEN BUTTON */}
-      <div className="">
-        <Button
-          className="bg-[#132573] text-white font-bold px-6 py-3"
-          onPress={openModal}
-        >
-          Book Appointment
-        </Button>
-      </div>
-
-      {/* MODAL */}
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={setIsOpen}
+      {/* BUTTON */}
+      <Button
+        className="bg-[#132573] text-white font-bold px-6 py-3 w-full"
+        onPress={openModal}
       >
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog className="sm:max-w-[600px]">
+        Book Appointment
+      </Button>
 
-              {/* HEADER */}
-              <Modal.Header>
-                <div>
-                  <h2 className="text-2xl font-black">
-                    Book Appointment
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Fill the form to get expert consultation
-                  </p>
-                </div>
-              </Modal.Header>
+      {/* MODAL (SAFE VERSION) */}
+      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+        <div className="p-6 bg-white rounded-2xl max-w-md mx-auto">
 
-              {/* BODY */}
-              <Modal.Body>
-                <form
-                  onSubmit={handleSubmit}
-                  className="space-y-4"
-                >
+          {/* HEADER */}
+          <div className="mb-4">
+            <h2 className="text-2xl font-black">
+              Book Appointment
+            </h2>
+            <p className="text-sm text-gray-500">
+              Fill form to continue payment
+            </p>
+          </div>
 
-                  {/* NAME + EMAIL */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input
-                      name="name"
-                      value={form.name}
-                      placeholder="Patient Name"
-                      onChange={handleChange}
-                      className="border p-3 rounded-xl w-full"
-                    />
+          {/* FORM */}
+          <form onSubmit={handleSubmit} className="space-y-4">
 
-                    <input
-                      name="email"
-                      value={form.email}
-                      placeholder="Email"
-                      onChange={handleChange}
-                      className="border p-3 rounded-xl w-full"
-                    />
-                  </div>
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Patient Name"
+              className="border p-3 rounded-xl w-full"
+            />
 
-                  {/* DOCTOR */}
-                  <select
-                    name="doctor"
-                    value={form.doctor}
-                    onChange={handleChange}
-                    className="border p-3 rounded-xl w-full"
-                  >
-                    <option value="">Choose Doctor</option>
-                    <option>Dr. Rahman</option>
-                    <option>Dr. Sultana</option>
-                    <option>Dr. Karim</option>
-                  </select>
+            <input
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className="border p-3 rounded-xl w-full"
+            />
 
-                  {/* MESSAGE */}
-                  <textarea
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    placeholder="Write message..."
-                    className="border p-3 rounded-xl w-full"
-                    rows={4}
-                  />
+            <input
+              name="doctor"
+              value={form.doctor}
+              readOnly
+              className="border p-3 rounded-xl w-full bg-gray-100"
+            />
 
-                  {/* CHECKBOX */}
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      name="agree"
-                      checked={form.agree}
-                      onChange={handleChange}
-                    />
-                    I agree to Terms & Privacy Policy
-                  </label>
+            <textarea
+              name="message"
+              value={form.message}
+              onChange={handleChange}
+              placeholder="Message"
+              className="border p-3 rounded-xl w-full"
+              rows={4}
+            />
 
-                  {/* SUBMIT */}
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#132573] text-white font-bold"
-                  >
-                    Make Appointment
-                  </Button>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="agree"
+                checked={form.agree}
+                onChange={handleChange}
+              />
+              I agree to Terms & Privacy Policy
+            </label>
 
-                </form>
-              </Modal.Body>
+            <Button
+              type="submit"
+              className="w-full bg-[#132573] text-white font-bold"
+            >
+              Continue to Payment
+            </Button>
 
-              {/* FOOTER */}
-              <Modal.Footer>
-                <Button
-                  variant="light"
-                  onPress={closeModal}
-                >
-                  Close
-                </Button>
-              </Modal.Footer>
+          </form>
 
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
+          {/* CLOSE */}
+          <Button
+            variant="light"
+            onPress={closeModal}
+            className="mt-3 w-full"
+          >
+            Close
+          </Button> 
+
+        </div>
       </Modal>
 
     </div>
   );
-}

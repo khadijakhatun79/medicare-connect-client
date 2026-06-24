@@ -14,7 +14,7 @@ export default function SignupForm() {
     email: "",
     password: "",
     gender: "male",
-    photo: "",
+    photo: "", 
   });
 
   const [showPassword, setShowPassword] = useState(false);

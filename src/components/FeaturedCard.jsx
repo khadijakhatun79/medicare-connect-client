@@ -27,7 +27,7 @@ const FeaturedCard = ({ doctor = {} }) => {
       return;
     }
 
-    router.push(`/appointment/${_id}`);
+    router.push(`/doctors/${_id}`);
   };
 
   return (
