@@ -46,7 +46,7 @@ export const fetchAppointments = async (email = "") => {
 export const fetchFeaturedAppointment = async () => {
   try {
     const res = await fetch(
-      `${API}/featured-doctors`,
+      `${API}/doctors`,
       {
         cache: "no-store",
       }
