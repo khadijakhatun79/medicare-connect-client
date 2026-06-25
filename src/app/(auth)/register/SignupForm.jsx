@@ -328,7 +328,7 @@ if (form.role === "doctor") {
           <Button
             type="submit"
             isLoading={loading}
-            className="w-full bg-[#1f5c4d] text-white font-semibold py-3 rounded-xl"
+            className="w-full bg-[#132573] text-white font-semibold py-3 rounded-xl"
           >
             Create Account
           </Button>
