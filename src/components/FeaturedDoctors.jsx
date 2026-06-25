@@ -8,6 +8,10 @@ export default function FeaturedDoctors() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -27,9 +31,29 @@ export default function FeaturedDoctors() {
     fetchDoctors();
   }, []);
 
+  // pagination logic
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentDoctors = doctors.slice(indexOfFirst, indexOfLast);
+
+  const totalPages = Math.ceil(doctors.length / itemsPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   return (
     <section className="pt-[120px] pb-[120px]">
       <div className="container mx-auto px-4">
+
         {/* Heading */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="inline-block px-4 py-1 rounded-full bg-blue-100 text-[#132573] text-sm font-medium mb-4">
@@ -41,8 +65,7 @@ export default function FeaturedDoctors() {
           </h2>
 
           <p className="text-slate-600 text-lg">
-            Connect with verified doctors and book appointments with
-            confidence.
+            Connect with verified doctors and book appointments with confidence.
           </p>
         </div>
 
@@ -59,114 +82,120 @@ export default function FeaturedDoctors() {
             <h3 className="text-2xl font-semibold text-slate-700">
               No verified doctors available right now
             </h3>
-
-            <p className="text-slate-500 mt-2">
-              Our admin team is currently reviewing doctor applications.
-            </p>
           </div>
         )}
 
         {/* Doctors Grid */}
-        {!loading && doctors.length > 0 && (
+        {!loading && currentDoctors.length > 0 && (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {doctors.map((doctor) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {currentDoctors.map((doctor) => (
                 <div
-                  key={doctor._id}
-                  className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-lg transition duration-300"
-                >
-                  {/* Top */}
-                  <div className="flex items-center gap-4">
-                    <Image
-  src={
-    doctor.profileImage ||
-    "https://i.pravatar.cc/300"
-  }
-  alt={doctor.doctorName || "Doctor Profile"}
-  width={80}
-  height={80}
-  className="rounded-full object-cover border"
-/>
- 
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Link href={`/doctors/${doctor._id}`}>
-                        <h3 className="font-bold text-lg text-slate-900 hover:text-[#132573] transition cursor-pointer">
-                          {doctor.doctorName}
-                        </h3>
-                      </Link>
+  key={doctor._id}
+  className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition duration-300"
+>
+  {/* Doctor Image */}
+  <div className="relative h-56 bg-slate-100">
+    <Image
+      src={
+        doctor.profileImage ||
+        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80"
+      }
+      alt={doctor.doctorName || "Doctor Profile"}
+      fill
+      className="object-cover"
+    />
+  </div>
 
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                          Verified
-                        </span>
-                      </div>
+  {/* Doctor Info */}
+  <div className="p-6">
+    <div className="mb-5">
+      <Link href={`/doctors/${doctor._id}`}>
+        <h3 className="font-bold text-xl text-slate-900 hover:text-[#132573] transition">
+          {doctor.doctorName}
+        </h3>
+      </Link>
 
-                      <p className="text-[#132573]">
-                        {doctor.specialization}
-                      </p>
+      <p className="text-[#132573] font-medium mt-1">
+        {doctor.specialization || "General Physician"}
+      </p>
 
-                      <p className="text-sm text-slate-500">
-                        {doctor.hospitalName ||
-                          "MediCare Hospital"}
-                      </p>
-                    </div>
-                  </div>
+      {doctor.title && (
+        <p className="text-sm text-slate-600 mt-1">
+          {doctor.title}
+        </p>
+      )}
 
-                  {/* Details */}
-                  <div className="mt-6 space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span>Experience</span>
-                      <span className="font-semibold">
-                        {doctor.experience || 0} Years
-                      </span>
-                    </div>
+      <p className="text-sm text-slate-500 mt-1">
+        {doctor.hospitalName || "MediCare Hospital"}
+      </p>
+    </div>
 
-                    <div className="flex justify-between">
-                      <span>Consultation Fee</span>
-                      <span className="font-semibold text-green-600">
-                        ৳{doctor.consultationFee || 0}
-                      </span>
-                    </div>
+    {/* Stats */}
+    <div className="space-y-3 text-sm border-t pt-4">
+      <div className="flex justify-between">
+        <span className="text-slate-600">
+          Experience
+        </span>
+        <span className="font-semibold">
+          {doctor.experience || 0} Years
+        </span>
+      </div>
 
-                    <div className="flex justify-between">
-                      <span>Rating</span>
-                      <span className="font-semibold">
-                        ⭐ {doctor.rating || 4.8}
-                      </span>
-                    </div>
+      <div className="flex justify-between">
+        <span className="text-slate-600">
+          Consultation Fee
+        </span>
+        <span className="font-semibold text-green-600">
+          ৳{doctor.consultationFee || 0}
+        </span>
+      </div>
 
-                    <div>
-                      <p className="mb-2">Available Days</p>
+      <div className="flex justify-between">
+        <span className="text-slate-600">
+          Rating
+        </span>
+        <span className="font-semibold">
+          ⭐ {doctor.rating || 4.8}
+        </span>
+      </div>
+    </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        {(doctor.availableDays || [
-                          "Sun",
-                          "Tue",
-                          "Thu",
-                        ]).map((day, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 text-xs rounded bg-slate-100"
-                          >
-                            {day}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                 
-                </div>
+    {/* Button */}
+    <Link
+      href={`/doctors/${doctor._id}`}
+      className="block mt-5"
+    >
+      <button className="w-full bg-[#132573] text-white py-3 rounded-lg hover:bg-[#0f1d5c] transition">
+        View Profile
+      </button>
+    </Link>
+  </div>
+</div>
               ))}
             </div>
 
-            {/* View All */}
-            <div className="text-center mt-12">
-              <Link href="/doctors">
-                <button className="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800">
-                  View All Doctors
-                </button>
-              </Link>
+            {/* Pagination Buttons */}
+            <div className="flex justify-center items-center gap-4 mt-10">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className="px-5 py-2 rounded-lg bg-slate-200 disabled:opacity-50"
+              >
+                Prev
+              </button>
+
+              <span className="text-slate-700 font-medium">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                className="px-5 py-2 rounded-lg bg-slate-200 disabled:opacity-50"
+              >
+                Next
+              </button>
             </div>
           </>
         )}

@@ -1,143 +1,161 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import Loading from "@/components/Loading";
-import toast from "react-hot-toast";
+import useSWR from "swr";
+import { fetcher } from "@/lib/api";
+import { CreditCard } from "lucide-react";
 
-export default function AdminPayments() {
-  const [payments, setPayments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [totalAmount, setTotalAmount] = useState(0);
+export default function PaymentsPage() {
+  const { data: payments = [], isLoading } =
+    useSWR("/payments", fetcher);
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
-
-  const fetchPayments = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/admin/payments`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      const data = await res.json();
-      if (data.success) {
-        setPayments(data.data);
-        const total = data.data.reduce((sum, p) => sum + p.amount, 0);
-        setTotalAmount(total);
-      }
-    } catch (error) {
-      console.error("Error fetching payments:", error);
-      toast.error("Failed to load payments");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <Loading />;
+  if (isLoading) {
+    return <p>Loading Payments...</p>;
+  }
 
   return (
-    <ProtectedRoute allowedRoles={["Admin"]}>
-      <div className="bg-gray-50 min-h-screen py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">
-                Payment Records
-              </h1>
-              <p className="text-gray-600">Monitor all payment transactions</p>
-            </div>
-            <div className="card">
-              <p className="text-sm text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-green-600">
-                ৳{totalAmount}
-              </p>
-            </div>
-          </div>
+    <div className="space-y-6">
 
-          {/* Payments Table */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Patient
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Doctor
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Amount
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Transaction
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {payments.map((payment) => (
-                    <tr key={payment._id}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={`https://ui-avatars.com/api/?name=${payment.patientName}&background=0EA5E9&color=fff`}
-                            alt={payment.patientName}
-                            className="w-8 h-8 rounded-full"
-                          />
-                          <span>{payment.patientName}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">{payment.doctorName}</td>
-                      <td className="px-6 py-4 font-bold text-green-600">
-                        ৳{payment.amount}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
-                          {payment.transactionId?.slice(0, 12)}...
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        {new Date(payment.paymentDate).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            payment.paymentStatus === "Success"
-                              ? "bg-green-100 text-green-700"
-                              : payment.paymentStatus === "Pending"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {payment.paymentStatus}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      {/* Header */}
+      <div className="bg-[#132573] text-white p-8 rounded-3xl">
+        <h1 className="text-4xl font-bold">
+          Payment Management
+        </h1>
 
-          {payments.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No payment records found</p>
-            </div>
-          )}
-        </div>
+        <p className="text-white mt-2">
+          Monitor all healthcare transactions
+        </p>
       </div>
-    </ProtectedRoute>
+
+      {/* Summary */}
+      <div className="grid md:grid-cols-3 gap-4">
+
+        <div className="bg-white border rounded-3xl p-6">
+          <p className="text-gray-500">
+            Total Transactions
+          </p>
+
+          <h2 className="text-3xl font-bold">
+            {payments.length}
+          </h2>
+        </div>
+
+        <div className="bg-white border rounded-3xl p-6">
+          <p className="text-gray-500">
+            Total Revenue
+          </p>
+
+          <h2 className="text-3xl font-bold">
+            ৳
+            {payments.reduce(
+              (sum, item) =>
+                sum + Number(item.amount || 0),
+              0
+            )}
+          </h2>
+        </div>
+
+        <div className="bg-white border rounded-3xl p-6">
+          <p className="text-gray-500">
+            Successful Payments
+          </p>
+
+          <h2 className="text-3xl font-bold">
+            {
+              payments.filter(
+                (p) =>
+                  p.status === "paid"
+              ).length
+            }
+          </h2>
+        </div>
+
+      </div>
+
+      {/* Payments Table */}
+      <div className="bg-white border rounded-3xl overflow-hidden">
+
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-bold">
+            Transaction History
+          </h2>
+        </div>
+
+        <div className="overflow-x-auto">
+
+          <table className="w-full">
+
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="p-4 text-left">
+                  Transaction
+                </th>
+
+                <th className="p-4 text-left">
+                  Patient
+                </th>
+
+                <th className="p-4 text-left">
+                  Amount
+                </th>
+
+                <th className="p-4 text-left">
+                  Status
+                </th>
+
+                <th className="p-4 text-left">
+                  Date
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {payments.map((payment) => (
+                <tr
+                  key={payment._id}
+                  className="border-t"
+                >
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <CreditCard size={18} />
+                      {payment.transactionId}
+                    </div>
+                  </td>
+
+                  <td className="p-4">
+                    {payment.patientEmail}
+                  </td>
+
+                  <td className="p-4 font-semibold">
+                    ৳ {payment.amount}
+                  </td>
+
+                  <td className="p-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        payment.status === "paid"
+                          ? "bg-green-100 text-[#132573]"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {payment.status}
+                    </span>
+                  </td>
+
+                  <td className="p-4">
+                    {payment.date}
+                  </td>
+                </tr>
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
   );
 }

@@ -230,7 +230,7 @@ if (form.role === "doctor") {
           {/* ROLE */}
           <TextField>
             <Label>Role</Label>
-            <select
+           <select
               name="role"
               value={form.role}
               onChange={handleChange}
@@ -238,6 +238,7 @@ if (form.role === "doctor") {
             >
               <option value="patient">Patient</option>
               <option value="doctor">Doctor</option>
+              <option value="admin">Admin</option>
             </select>
           </TextField>
 

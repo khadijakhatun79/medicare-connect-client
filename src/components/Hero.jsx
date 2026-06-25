@@ -1,7 +1,16 @@
 "use client";
 
 import Image from "next/image";
+const scrollToDepartments = () => {
+  const section = document.getElementById("departments");
 
+  if (section) {
+    section.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
 export default function Hero() {
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center">
@@ -122,9 +131,12 @@ export default function Hero() {
       </div>
 
       {/* Scroll */}
-      <div className="hidden lg:flex absolute left-8 bottom-24 origin-left -rotate-90 items-center gap-3 text-white/70 font-semibold text-xs tracking-[0.2em] uppercase select-none">
-        <span>← Scroll for more</span>
-      </div>
+     <button
+  onClick={scrollToDepartments}
+  className="hidden lg:flex absolute left-8 bottom-24 origin-left -rotate-90 items-center gap-3 text-white/70 hover:text-white font-semibold text-xs tracking-[0.2em] uppercase select-none transition duration-300 cursor-pointer"
+>
+  <span>← Scroll for More</span>
+</button>
 
     </section>
   );

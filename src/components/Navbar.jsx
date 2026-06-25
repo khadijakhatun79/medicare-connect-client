@@ -180,65 +180,153 @@ useEffect(() => {
 
         {/* MOBILE BUTTON */}
         <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden bg-[#132573] p-2 rounded-lg text-white"
-        >
-          {isMenuOpen ? <X /> : <Menu />}
-        </button>
+  onClick={() => setIsMenuOpen(!isMenuOpen)}
+  className="md:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-[#132573] text-white shadow-lg"
+>
+  {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+</button>
       </div>
 
       {/* MOBILE MENU */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white p-4 space-y-3 border-t">
+     {isMenuOpen && (
+  <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-t border-slate-100 rounded-b-3xl overflow-hidden animate-in slide-in-from-top duration-300">
 
-          <Link href="/">Home</Link>
-          <Link href="/doctors">Find Doctors</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
-          <Link href="/emergency">Emergency</Link>
+    {/* User Info */}
+    {session && (
+      <div className="p-5 bg-slate-50 border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          <Image
+            src={
+              session?.user?.image ||
+              "https://images.unsplash.com/photo-1502685104226-ee32379fefbe"
+            }
+            width={50}
+            height={50}
+            alt="user"
+            className="rounded-full border-2 border-[#132573]"
+          />
 
-          <Link href={getDashboardRoute()}>Dashboard</Link>
+          <div>
+            <h4 className="font-semibold text-slate-900">
+              {session?.user?.name}
+            </h4>
 
-          {!session ? (
-            <div className="flex gap-3 pt-3">
-              <Link href="/login">Login</Link>
-              <Link href="/register">Register</Link>
-            </div>
-          ) : (
-            <>
-              <div className="flex items-center gap-3 pt-3">
-                <Image
-                  src={
-                    session?.user?.image ||
-                    "https://images.unsplash.com/photo-1502685104226-ee32379fefbe"
-                  }
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  alt="user"
-                />
+            <p className="text-xs text-slate-500">
+              {session?.user?.email}
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
 
-                <div>
-                  <p className="font-semibold">
-                    {session?.user?.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {session?.user?.email}
-                  </p>
-                </div>
-              </div>
+    {/* Navigation */}
+    <div className="p-4 space-y-2">
 
-              <button
-                onClick={handleLogout}
-                className="text-red-500 pt-2"
-              >
-                Logout
-              </button>
-            </>
-          )}
+      <Link
+        href="/"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+      >
+        Home
+      </Link>
+
+      <Link
+        href="/doctors"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+      >
+        Find Doctors
+      </Link>
+
+      <Link
+        href="/about"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+      >
+        About
+      </Link>
+
+      <Link
+        href="/contact"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center px-4 py-3 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+      >
+        Contact
+      </Link>
+
+      <Link
+        href="/emergency"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-600 font-medium"
+      >
+        <Phone size={18} />
+        Emergency
+      </Link>
+
+      {session && (
+        <>
+          <Link
+            href={getDashboardRoute()}
+            onClick={() => setIsMenuOpen(false)}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#132573]/10 text-[#132573] font-semibold"
+          >
+            <LayoutDashboard size={18} />
+            Dashboard
+          </Link>
+
+          <Link
+            href="/profile"
+            onClick={() => setIsMenuOpen(false)}
+            className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-slate-100 text-slate-700"
+          >
+            <User size={18} />
+            Profile
+          </Link>
+        </>
+      )}
+    </div>
+
+    {/* Auth Section */}
+    <div className="p-4 border-t border-slate-100">
+
+      {!session ? (
+        <div className="grid grid-cols-2 gap-3">
+
+          <Link
+            href="/login"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <button className="w-full py-3 rounded-xl border border-slate-200 font-semibold text-slate-700 hover:bg-slate-50">
+              Login
+            </button>
+          </Link>
+
+          <Link
+            href="/register"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <button className="w-full py-3 rounded-xl bg-[#132573] text-white font-semibold hover:bg-[#0f1f5c]">
+              Join Us
+            </button>
+          </Link>
 
         </div>
+      ) : (
+        <button
+          onClick={() => {
+            setIsMenuOpen(false);
+            handleLogout();
+          }}
+          className="w-full py-3 rounded-xl bg-red-50 text-red-600 font-semibold flex items-center justify-center gap-2 hover:bg-red-100 transition"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
       )}
+    </div>
+
+  </div>
+)}
     </nav>
   );
 }

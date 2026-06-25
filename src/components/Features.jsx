@@ -44,7 +44,9 @@ const specializations = [
 
 export default function DepartmentSection() {
   return (
-    <section className="py-24 bg-white overflow-hidden">
+    <section id="departments"
+  className="py-24 bg-white overflow-hidden"
+>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Heading */}
         <div className="text-center">
