@@ -322,7 +322,7 @@ if (form.role === "doctor") {
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           {/* SUCCESS */}
-          {success && <p className="text-green-600 text-sm">{success}</p>}
+          {success && <p className="text-[#132573] text-sm">{success}</p>}
 
           {/* SUBMIT */}
           <Button

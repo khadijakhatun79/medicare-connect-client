@@ -141,7 +141,7 @@ const handleLogin = async (e) => {
 
               <Input
                 type="email"
-                placeholder="sarah@example.com"
+                placeholder="khadija@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="border-0 outline-none w-full"
