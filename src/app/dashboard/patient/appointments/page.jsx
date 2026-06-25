@@ -7,7 +7,7 @@ export default function AppointmentsPage() {
   const { data = [], mutate } = useSWR("/appointments", fetcher);
 
   const updateStatus = async (id, status) => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}appointments/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -18,7 +18,7 @@ export default function AppointmentsPage() {
   };
 
   const remove = async (id) => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}appointments/${id}`, {
       method: "DELETE",
       credentials: "include",
     });

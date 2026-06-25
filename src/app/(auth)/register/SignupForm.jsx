@@ -72,7 +72,7 @@ export default function SignupForm() {
 console.log("Signup Result:", result);
 
 
-await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+await fetch(`${process.env.NEXT_PUBLIC_API_URL}users`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
