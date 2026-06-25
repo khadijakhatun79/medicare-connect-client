@@ -1,5 +1,26 @@
 const API = process.env.NEXT_PUBLIC_API_URL;
 
+/* ================= ALL DOCTORS ================= */
+export const fetchDoctors = async (search = "") => {
+  try {
+    const res = await fetch(
+      `${API}/doctors?search=${search}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch doctors");
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.log("fetchDoctors error:", error);
+    return [];
+  }
+};
+
 /* ================= APPOINTMENTS ================= */
 export const fetchAppointments = async (email = "") => {
   try {

@@ -13,7 +13,7 @@ export async function POST(req) {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      mode: "payment", // ✅ ONE TIME PAYMENT (IMPORTANT)
+      mode: "payment", 
 
       line_items: [
         {
@@ -22,7 +22,7 @@ export async function POST(req) {
             product_data: {
               name: `Doctor Appointment - ${doctorName}`,
             },
-            unit_amount: fee * 100, // taka → paisa
+            unit_amount: fee * 100,
           },
           quantity: 1,
         },

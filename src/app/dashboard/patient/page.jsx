@@ -5,10 +5,12 @@ import { fetcher } from "@/lib/api";
 import { Calendar, CreditCard, Heart } from "@gravity-ui/icons";
 
 export default function PatientDashboard() {
+  const { data: user } = useSWR("/patient/profile", fetcher);
 
   const { data: appointmentsData } = useSWR("/appointments", fetcher);
   const { data: paymentsData } = useSWR("/payments", fetcher);
   const { data: reviewsData } = useSWR("/reviews/me", fetcher);
+
 
   // SAFE NORMALIZATION (IMPORTANT)
   const appointments = Array.isArray(appointmentsData)
@@ -34,22 +36,73 @@ export default function PatientDashboard() {
     <div className="space-y-8">
 
       {/* Welcome */}
-      <section className="rounded-3xl bg-emerald-700 p-8 text-white">
-        <h1 className="text-3xl font-bold">Welcome Back 👋</h1>
-        <p className="opacity-90">
-          Manage your health journey in one place
-        </p>
-      </section>
+      <section className="rounded-3xl bg-[#132573] p-8 text-white relative overflow-hidden">
+  <h1 className="text-4xl font-bold">
+    Welcome, {user?.name || "Patient"}!
+  </h1>
+  <p>Email: {user?.email}</p>
+
+  <p className="mt-3 text-lg opacity-90 max-w-xl">
+    Access real-time schedules, view medical records,
+    coordinate with clinicians and manage payments.
+  </p>
+</section>
 
       {/* Stats */}
-      <section className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+     <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
-        <StatCard icon={<Calendar />} label="Upcoming" value={stats.upcoming} />
-        <StatCard icon={<Calendar />} label="Appointments" value={stats.history} />
-        <StatCard icon={<CreditCard />} label="Payments" value={`$${stats.payments}`} />
-        <StatCard icon={<Heart />} label="Favorites" value={stats.favorites} />
+  <StatCard
+    icon={<Calendar />}
+    label="Upcoming Clinics"
+    value={stats.upcoming}
+  />
 
-      </section>
+  <StatCard
+    icon={<Calendar />}
+    label="Total Appointments"
+    value={stats.history}
+  />
+
+  <StatCard
+    icon={<CreditCard />}
+    label="Total Payments"
+    value={`$${stats.payments}`}
+  />
+
+  <StatCard
+    icon={<Heart />}
+    label="Reviews"
+    value={reviews.length}
+  />
+
+</section>
+
+<Box title="Upcoming Consultations">
+
+  {appointments.slice(0, 5).map((a) => (
+    <div
+      key={a._id}
+      className="flex justify-between items-center border rounded-2xl p-4"
+    >
+      <div>
+        <h3 className="font-semibold text-lg">
+          {a.doctorName}
+        </h3>
+
+        <p className="text-gray-500 text-sm">
+          {a.date} • {a.time}
+        </p>
+      </div>
+
+      <span className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">
+        {a.status}
+      </span>
+    </div>
+  ))}
+
+</Box>
+
+
 
       {/* Quick Preview */}
       <section className="grid md:grid-cols-2 gap-6">
@@ -110,7 +163,7 @@ function Item({ title, sub }) {
       <div>
         <p className="font-medium">{title}</p>
         <p className="text-sm text-gray-500">{sub}</p>
-      </div>
+      </div> 
     </div>
   );
 }

@@ -24,48 +24,85 @@ export default function LoginPage() {
   const [error, setError] = useState("");
 
   // LOGIN
-  const handleLogin = async (e) => {
-    e.preventDefault();
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    setError("");
-    setLoading(true);
+  setError("");
+  setLoading(true);
 
-    try {
-      if (!email || !password) {
-        setError("Email and password required");
-        setLoading(false);
-        return;
-      }
-
-      const { data, error: authError } = await signIn.email({
-        email,
-        password,
-        callbackURL: "/",
-      });
-
-      if (authError) {
-        setError(authError.message || "Invalid credentials");
-        setLoading(false);
-        return;
-      }
-
-      // ROLE BASED REDIRECT (MEDICARE REQUIREMENT)
-      const role = data?.user?.role;
-
-      if (role === "doctor") {
-        router.push("/dashboard/doctor");
-      } else if (role === "admin") {
-        router.push("/dashboard/admin");
-      } else {
-        router.push("/dashboard/patient");
-      }
-
-    } catch (err) {
-      setError("Something went wrong");
-    } finally {
-      setLoading(false);
+  try {
+    if (!email || !password) {
+      setError("Email and password required");
+      return;
     }
-  };
+
+    const { error: authError } = await signIn.email({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError(authError.message || "Invalid credentials");
+      return;
+    }
+
+    // User Info
+    const userRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/${email}`
+    );
+
+    const user = await userRes.json();
+
+    // Express JWT
+    const jwtRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email }),
+      }
+    );
+
+    const jwtData = await jwtRes.json();
+
+    console.log("JWT DATA:", jwtData);
+
+    if (!jwtData.token) {
+      throw new Error("JWT token not received");
+    }
+
+    localStorage.setItem(
+      "token",
+      jwtData.token
+    );
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(user)
+    );
+
+    if (user.role === "doctor") {
+      router.push("/dashboard/doctor");
+    } else if (user.role === "admin") {
+      router.push("/dashboard/admin");
+    } else {
+      router.push("/dashboard/patient");
+    }
+
+  
+
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+ 
 
   // GOOGLE LOGIN
   const handleGoogle = async () => {

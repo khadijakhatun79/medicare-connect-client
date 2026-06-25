@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Loading from "@/components/Loading";
-import AppointmentCard from "@/components/AppointmentCard";
 import toast from "react-hot-toast";
 
 export default function DoctorAppointments() {
@@ -11,73 +10,77 @@ export default function DoctorAppointments() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
+ 
 
-  const fetchAppointments = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/appointments/doctor`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+ const fetchAppointments = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/doctor/appointments`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-      const data = await res.json();
+      },
+    );
 
-      if (data.success) {
-        setAppointments(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching appointments:", error);
-      toast.error("Failed to load appointments");
-    } finally {
-      setLoading(false);
+    const data = await res.json();
+
+    if (data.success) {
+      setAppointments(data.data);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    toast.error("Failed to load appointments");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const filteredAppointments = appointments.filter((app) => {
     if (filter === "all") return true;
-    return app.appointmentStatus.toLowerCase() === filter.toLowerCase();
+
+    return (
+      app.status?.toLowerCase() === filter.toLowerCase()
+    );
   });
 
   const statuses = [
-    "All",
-    "Pending",
-    "Accepted",
-    "Rejected",
-    "Completed",
-    "Cancelled",
+    "all",
+    "pending",
+    "confirmed",
+    "completed",
+    "cancelled",
   ];
 
   if (loading) return <Loading />;
 
   return (
-    <ProtectedRoute allowedRoles={["Doctor"]}>
-      <div className="bg-gray-50 min-h-screen py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">
-                Appointment Requests
-              </h1>
-              <p className="text-gray-600">Manage your patient appointments</p>
-            </div>
+    <ProtectedRoute allowedRoles={["doctor"]}>
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold">
+              Doctor Appointments
+            </h1>
+
+            <p className="text-gray-500">
+              Manage your patient appointments
+            </p>
           </div>
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-2 mb-6">
+          {/* Filter */}
+          <div className="flex flex-wrap gap-3 mb-6">
             {statuses.map((status) => (
               <button
                 key={status}
-                onClick={() => setFilter(status.toLowerCase())}
-                className={`px-4 py-2 rounded-lg transition ${
-                  filter === status.toLowerCase()
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                onClick={() => setFilter(status)}
+                className={`px-4 py-2 rounded-lg capitalize transition ${
+                  filter === status
+                    ? "bg-blue-600 text-white"
+                    : "bg-white border hover:bg-gray-100"
                 }`}
               >
                 {status}
@@ -85,41 +88,96 @@ export default function DoctorAppointments() {
             ))}
           </div>
 
-          {/* Pending Count */}
-          {filter === "pending" && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <p className="text-yellow-800">
-                <strong>
-                  {
-                    appointments.filter(
-                      (a) => a.appointmentStatus === "Pending",
-                    ).length
-                  }
-                </strong>{" "}
-                pending appointments waiting for your response
-              </p>
-            </div>
-          )}
-
-          {/* Appointments List */}
+          {/* Appointment List */}
           {filteredAppointments.length === 0 ? (
-            <div className="card text-center py-12">
-              <div className="text-6xl mb-4">📋</div>
-              <h3 className="text-xl font-bold text-gray-800">
-                No Appointments
-              </h3>
-              <p className="text-gray-600 mt-2">
-                You don't have any {filter !== "all" ? filter : ""} appointments
+            <div className="bg-white rounded-xl p-10 text-center shadow-sm">
+              <h2 className="text-xl font-semibold">
+                No Appointments Found
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                No appointments available.
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid gap-4">
               {filteredAppointments.map((appointment) => (
-                <AppointmentCard
-                  key={appointment.id}
-                  appointment={appointment}
-                  onUpdate={fetchAppointments}
-                />
+                <div
+                  key={appointment._id}
+                  className="bg-white rounded-2xl border p-6 shadow-sm"
+                >
+                  <div className="flex justify-between items-start flex-wrap gap-4">
+
+                    <div>
+                      <h3 className="text-xl font-bold">
+                        {appointment.patientName ||
+                          appointment.patientEmail}
+                      </h3>
+
+                      <p className="text-gray-500">
+                        {appointment.patientEmail}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        appointment.status === "confirmed"
+                          ? "bg-green-100 text-green-700"
+                          : appointment.status === "pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : appointment.status === "completed"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {appointment.status}
+                    </span>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-4 mt-5">
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Appointment Date
+                      </p>
+
+                      <p className="font-medium">
+                        {appointment.date || "N/A"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Time
+                      </p>
+
+                      <p className="font-medium">
+                        {appointment.time || "N/A"}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Payment Status
+                      </p>
+
+                      <p className="font-medium">
+                        {appointment.paymentStatus ||
+                          "unpaid"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {appointment.problem && (
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-500">
+                        Problem
+                      </p>
+
+                      <p>{appointment.problem}</p>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           )}

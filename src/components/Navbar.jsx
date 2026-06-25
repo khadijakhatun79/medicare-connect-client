@@ -24,17 +24,43 @@ export function MainNavbar() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const role = session?.user?.role;
+  const [role, setRole] = useState("");
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+// Get User Role
+useEffect(() => {
+  const getRole = async () => {
+    try {
+      if (!session?.user?.email) return;
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${session.user.email}`
+      );
 
+      const data = await res.json();
+
+      setRole(data?.role?.toLowerCase() || "");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  getRole();
+}, [session]);
+
+// Navbar Scroll Effect
+useEffect(() => {
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 50);
+  };
+
+  handleScroll();
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
   const handleLogout = async () => {
     await signOut();
     router.push("/");
@@ -47,13 +73,13 @@ export function MainNavbar() {
   };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#00001b] backdrop-blur-md shadow-sm py-2"
-          : "py-4"
-      }`}
-    >
+   <nav
+  className={`fixed top-0 left-0 w-full z-[9999] transition-all duration-300 ${
+    scrolled
+      ? "bg-[#00001b]/95 backdrop-blur-md shadow-lg py-2"
+      : "bg-transparent py-4"
+  }`}
+>
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
 
         {/* LOGO */}
@@ -87,7 +113,7 @@ export function MainNavbar() {
         </div>
 
         {/* AUTH SECTION */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className=" md:flex items-center gap-4">
 
           {!isPending && !session ? (
             <>
@@ -121,15 +147,9 @@ export function MainNavbar() {
               </div>
 
               {/* DROPDOWN */}
-              <div className="absolute right-0 top-8 hidden group-hover:flex flex-col bg-white shadow-xl rounded-xl w-52 overflow-hidden">
+              <div className="absolute right-0 top-6 hidden group-hover:flex flex-col bg-white shadow-xl rounded-xl w-52 overflow-hidden">
 
-                <Link
-                  href="/profile"
-                  className="px-4 py-3 flex items-center gap-2 hover:bg-gray-100"
-                >
-                  <User size={16} />
-                  Profile
-                </Link>
+             
 
                 <Link
                   href={getDashboardRoute()}
@@ -137,6 +157,12 @@ export function MainNavbar() {
                 >
                   <LayoutDashboard size={16} />
                   Dashboard
+                </Link>
+                <Link
+                  href="/profile"
+                  className="block px-4 py-3 text-base font-medium text-slate-900 hover:bg-slate-50 rounded-xl"
+                >
+                  Profile
                 </Link>
 
                 <button

@@ -95,7 +95,7 @@ export default function DoctorDashboard() {
   if (loading) return <Loading />;
 
   return (
-    <ProtectedRoute allowedRoles={["Doctor"]}>
+    <ProtectedRoute allowedRoles={["doctor"]}>
       <div className="bg-gray-50 min-h-screen py-8">
         <div className="container mx-auto px-4">
           {/* Welcome Section */}
@@ -131,7 +131,7 @@ export default function DoctorDashboard() {
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="card text-center">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-[#132573]">
                 {stats.totalPatients}
               </div>
               <div className="text-gray-600">Total Patients</div>

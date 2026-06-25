@@ -24,7 +24,7 @@
     "react-dom": "19.2.4",
     "react-hot-toast": "^2.6.0",
     "stripe": "^22.2.3",
-    "swiper": "^12.1.4",
+    "swiper": "^12.2.0",
     "swr": "^2.4.1"
   },
   "devDependencies": {

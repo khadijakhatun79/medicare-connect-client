@@ -8,37 +8,37 @@ const specializations = [
     title: "Cardiology",
     description: "Heart and cardiovascular care by experienced specialists.",
     icon: "/assets/department_icon_1.svg",
-    href: "#",
+    href: "/doctors",
   },
   {
     title: "Neurology",
     description: "Diagnosis and treatment of brain and nervous system disorders.",
     icon: "/assets/department_icon_2.svg",
-    href: "#",
+    href: "/doctors",
   },
   {
     title: "Orthopedics",
     description: "Comprehensive care for bones, joints, and muscles.",
     icon: "/assets/department_icon_3.svg",
-    href: "#",
+    href: "/doctors",
   },
   {
     title: "Pediatrics",
     description: "Specialized healthcare services for infants and children.",
     icon: "/assets/department_icon_4.svg",
-    href: "#",
+    href: "/doctors",
   },
   {
     title: "Dermatology",
     description: "Expert treatment for skin, hair, and nail conditions.",
     icon: "/assets/department_icon_5.svg",
-    href: "#",
+    href: "/doctors",
   },
   {
     title: "General Medicine",
     description: "Primary healthcare services for everyday medical needs.",
     icon: "/assets/department_icon_6.svg",
-    href: "#",
+    href: "/doctors",
   },
 ];
 

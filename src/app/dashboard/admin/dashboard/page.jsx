@@ -130,7 +130,7 @@ export default function AdminDashboard() {
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="card text-center">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-[#132573]">
                 {stats.totalUsers}
               </div>
               <div className="text-gray-600">Total Users</div>

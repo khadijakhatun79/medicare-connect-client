@@ -339,7 +339,7 @@ export default function DoctorPrescriptions() {
                         {new Date(prescription.createdAt).toLocaleDateString()}
                       </p>
                       {prescription.followUpDate && (
-                        <p className="text-sm text-blue-600">
+                        <p className="text-sm text-[#132573]">
                           Follow-up:{" "}
                           {new Date(
                             prescription.followUpDate,

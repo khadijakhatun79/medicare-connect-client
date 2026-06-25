@@ -10,12 +10,21 @@ export default function SignupForm() {
   const router = useRouter();
 
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    gender: "male",
-    photo: "", 
-  });
+  name: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+  role: "patient",
+  gender: "male",
+  photo: "",
+
+  specialization: "",
+  qualifications: "",
+  experience: "",
+  consultationFee: "",
+  hospitalName: "",
+});
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,6 +43,8 @@ export default function SignupForm() {
     setError("");
     setSuccess("");
 
+  
+
     if (!form.name || !form.email || !form.password) {
       return setError("All required fields are required");
     }
@@ -44,38 +55,89 @@ export default function SignupForm() {
       );
     }
 
+      if (form.password !== form.confirmPassword) {
+  return setError("Passwords do not match");
+}
+
     setLoading(true);
 
     try {
-      const { error: authError } = await signUp.email({
-        email: form.email,
-        password: form.password,
-        name: form.name,
-        image: form.photo || "",
-        role: form.role,
-        gender: form.gender,
-      });
+   const result = await signUp.email({
+  email: form.email,
+  password: form.password,
+  name: form.name,
+  image: form.photo || "",
+});
 
-      if (authError) {
-        setError(authError.message);
-        return;
-      }
+console.log("Signup Result:", result);
 
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          createdAt: new Date(),
-        }),
-      });
+
+await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: form.name,
+    email: form.email,
+    phone: form.phone,
+    gender: form.gender,
+    role: form.role,
+    photo: form.photo,
+    createdAt: new Date(),
+  }),
+});
+
+if (result?.error) {
+  setError(result.error.message);
+  return;
+}
+
+     
+
+     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+body: JSON.stringify({
+  name: form.name,
+  email: form.email,
+  phone: form.phone,
+  gender: form.gender,
+  role: form.role,
+  photo: form.photo,
+  createdAt: new Date(),
+}),
+});
+
+// Doctor হলে doctor collection-এ save
+if (form.role === "doctor") {
+  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/doctors`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      doctorName: form.name,
+      email: form.email,
+      specialization: form.specialization,
+      qualifications: form.qualifications,
+      experience: form.experience,
+      consultationFee: Number(form.consultationFee),
+      hospitalName: form.hospitalName,
+      profileImage: form.photo,
+    }),
+  });
+}
 
       setSuccess("Account created successfully!");
 
       setTimeout(() => router.push("/"), 800);
     } catch (err) {
-      setError("Something went wrong");
-    } finally {
+  console.error(err);
+  setError(err.message || "Something went wrong");
+} finally {
       setLoading(false);
     }
   };
@@ -104,7 +166,7 @@ export default function SignupForm() {
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="Dr. Sarah Johnson"
+              placeholder="khadija"
             />
           </TextField>
 
@@ -116,9 +178,19 @@ export default function SignupForm() {
               type="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="sarah@email.com"
+              placeholder="khadija@email.com"
             />
           </TextField>
+
+          <TextField>
+  <Label>Phone Number</Label>
+  <Input
+    name="phone"
+    value={form.phone}
+    onChange={handleChange}
+    placeholder="017XXXXXXXX"
+  />
+</TextField>
 
           {/* PASSWORD WITH EYE ICON */}
           <TextField>
@@ -144,6 +216,17 @@ export default function SignupForm() {
             </div>
           </TextField>
 
+          <TextField>
+  <Label>Confirm Password</Label>
+  <Input
+    name="confirmPassword"
+    type={showPassword ? "text" : "password"}
+    value={form.confirmPassword}
+    onChange={handleChange}
+    placeholder="Confirm password"
+  />
+</TextField>
+
           {/* ROLE */}
           <TextField>
             <Label>Role</Label>
@@ -157,6 +240,56 @@ export default function SignupForm() {
               <option value="doctor">Doctor</option>
             </select>
           </TextField>
+
+          {form.role === "doctor" && (
+  <>
+    <TextField>
+      <Label>Specialization</Label>
+      <Input
+        name="specialization"
+        value={form.specialization}
+        onChange={handleChange}
+      />
+    </TextField>
+
+    <TextField>
+      <Label>Qualifications</Label>
+      <Input
+        name="qualifications"
+        value={form.qualifications}
+        onChange={handleChange}
+      />
+    </TextField>
+
+    <TextField>
+      <Label>Experience</Label>
+      <Input
+        name="experience"
+        value={form.experience}
+        onChange={handleChange}
+      />
+    </TextField>
+
+    <TextField>
+      <Label>Consultation Fee</Label>
+      <Input
+        name="consultationFee"
+        type="number"
+        value={form.consultationFee}
+        onChange={handleChange}
+      />
+    </TextField>
+
+    <TextField>
+      <Label>Hospital Name</Label>
+      <Input
+        name="hospitalName"
+        value={form.hospitalName}
+        onChange={handleChange}
+      />
+    </TextField>
+  </>
+)}
 
           {/* GENDER */}
           <TextField>

@@ -100,3 +100,11 @@
     border-color: #132573;
 }
 
+.testimonial-swiper {
+  width: 100%;
+}
+
+.testimonial-swiper .swiper-slide {
+  width: 100% !important;
+  height: auto;
+}
