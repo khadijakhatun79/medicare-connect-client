@@ -111,7 +111,7 @@ body: JSON.stringify({
 }),
 });
 
-// Doctor হলে doctor collection-এ save
+
 if (form.role === "doctor") {
   await fetch(`${process.env.NEXT_PUBLIC_API_URL}/doctors`, {
     method: "POST",

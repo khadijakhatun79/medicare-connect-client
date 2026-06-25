@@ -50,7 +50,6 @@ const handleLogin = async (e) => {
     const userRes = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/users/${email}`
     );
-
     const user = await userRes.json();
 
     // Express JWT
