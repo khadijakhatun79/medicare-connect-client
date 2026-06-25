@@ -1,18 +1,24 @@
+export const dynamic = "force-dynamic";
 import Breadcrumb from "@/components/Breadcrumb";
 import DoctorsCard from "@/components/DoctorsCard";
 import { fetchDoctors } from "@/lib/doctors/data";
 import { Button } from "@heroui/react";
 import { Filter, Search } from "lucide-react";
 
+
 const DoctorsPage = async ({ searchParams }) => {
-  const search = searchParams?.search || "";
+  const params = await searchParams;
+  const search =
+    typeof params?.search === "string"
+      ? params.search
+      : "";
 
-  const doctors = await fetchDoctors(search);
+   const doctors = await fetchDoctors(search);
 
-  // Remove duplicate doctors by _id
-  const uniqueDoctors = Array.from(
+     const uniqueDoctors = Array.from(
     new Map(doctors?.map((doctor) => [doctor._id, doctor])).values()
   );
+  
 
   return (
     <div className="min-h-screen bg-[#F7FAF8] w-full overflow-x-hidden">
