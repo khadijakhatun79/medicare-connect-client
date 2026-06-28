@@ -27,36 +27,46 @@ export default function DoctorProfile() {
     fetchDoctorProfile();
   }, []);
 
-  const fetchDoctorProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/doctors/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+const fetchDoctorProfile = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/doctors/profile`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-      const data = await res.json();
-      if (data.success) {
-        setDoctor(data.data);
-        setFormData({
-          specialization: data.data.specialization || "",
-          qualifications: data.data.qualifications || [],
-          experience: data.data.experience || "",
-          consultationFee: data.data.consultationFee || "",
-          hospitalName: data.data.hospitalName || "",
-          hospitalAddress: data.data.hospitalAddress || "",
-        });
       }
-    } catch (error) {
-      console.error("Error fetching doctor profile:", error);
-      toast.error("Failed to load profile");
-    } finally {
-      setLoading(false);
+    );
+
+    if (res.status === 404) {
+      setDoctor(null);
+      return;
     }
-  };
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch profile");
+    }
+
+    const data = await res.json();
+
+    setDoctor(data);
+
+    setFormData({
+      specialization: data.specialization || "",
+      qualifications: data.qualifications || [],
+      experience: data.experience || "",
+      consultationFee: data.consultationFee || "",
+      hospitalName: data.hospitalName || "",
+      hospitalAddress: data.hospitalAddress || "",
+    });
+  } catch (err) {
+    console.log(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,43 +80,59 @@ export default function DoctorProfile() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
     setLoading(true);
 
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/doctors/profile`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        },
-      );
+    const token = localStorage.getItem("token");
 
-      const data = await res.json();
-      if (data.success) {
-        toast.success("Profile updated successfully");
-        setIsEditing(false);
-        fetchDoctorProfile();
-      } else {
-        toast.error(data.message || "Failed to update profile");
+    const endpoint = doctor
+      ? "/doctor/profile"
+      : "/doctors";
+
+    const method = doctor ? "PUT" : "POST";
+
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
       }
-    } catch (error) {
-      toast.error("Error updating profile");
-    } finally {
-      setLoading(false);
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Something went wrong");
     }
-  };
+
+    toast.success(
+      doctor
+        ? "Profile updated successfully"
+        : "Profile created successfully"
+    );
+
+    setIsEditing(false);
+
+    fetchDoctorProfile();
+  } catch (err) {
+    console.log(err);
+    toast.error(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading) return <Loading />;
 
   return (
-    <ProtectedRoute allowedRoles={["Doctor"]}>
+    <ProtectedRoute allowedRoles={["doctor"]}>
       <div className="bg-gray-50 min-h-screen py-8">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="flex justify-between items-center mb-8">

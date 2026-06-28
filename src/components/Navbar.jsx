@@ -84,11 +84,11 @@ useEffect(() => {
 
         {/* LOGO */}
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/assets/logo.png"
-            width={40}
-            height={40}
-            alt="logo"
+         <Image
+          src="/assets/logo.png" 
+          width={24}
+          height={24}
+          style={{ height: "auto" }} alt="logo"
           />
           <span className="font-extrabold text-2xl text-white">
             MediCare

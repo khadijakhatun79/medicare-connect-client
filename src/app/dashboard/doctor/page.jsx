@@ -5,14 +5,14 @@ import { fetcher } from "@/lib/api";
 import { Calendar, Person } from "@gravity-ui/icons";
 
 export default function DoctorDashboard() {
-    const { data: user } = useSWR("/doctor/profile", fetcher);
+    const { data: user } = useSWR("/doctors/profile", fetcher);
   const { data: appointmentsData } = useSWR(
-    "/doctor/appointments",
+    "/doctors/appointments",
     fetcher
   );
 
   const { data: prescriptionsData } = useSWR(
-    "/doctor/prescriptions",
+    "/doctors/prescriptions",
     fetcher
   );
 

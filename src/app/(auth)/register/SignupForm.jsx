@@ -22,7 +22,7 @@ export default function SignupForm() {
   specialization: "",
   qualifications: "",
   experience: "",
-  consultationFee: "",
+  consultationFee: "",  
   hospitalName: "",
 });
 
@@ -38,109 +38,73 @@ export default function SignupForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+ const handleSignup = async (e) => {
+  e.preventDefault();
 
-  
+  setError("");
+  setSuccess("");
 
-    if (!form.name || !form.email || !form.password) {
-      return setError("All required fields are required");
-    }
+  if (!form.name || !form.email || !form.password) {
+    return setError("All required fields are required");
+  }
 
-    if (!passwordRegex.test(form.password)) {
-      return setError(
-        "Password must be 6+ chars with 1 number & 1 special character"
-      );
-    }
+  if (!passwordRegex.test(form.password)) {
+    return setError(
+      "Password must be at least 6 characters with 1 number and 1 special character."
+    );
+  }
 
-      if (form.password !== form.confirmPassword) {
-  return setError("Passwords do not match");
-}
+  if (form.password !== form.confirmPassword) {
+    return setError("Passwords do not match");
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-   const result = await signUp.email({
-  email: form.email,
-  password: form.password,
-  name: form.name,
-  image: form.photo || "",
-});
-
-console.log("Signup Result:", result);
-
-
-await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    name: form.name,
-    email: form.email,
-    phone: form.phone,
-    gender: form.gender,
-    role: form.role,
-    photo: form.photo,
-    createdAt: new Date(),
-  }),
-});
-
-if (result?.error) {
-  setError(result.error.message);
-  return;
-}
-
-     
-
-     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-body: JSON.stringify({
-  name: form.name,
-  email: form.email,
-  phone: form.phone,
-  gender: form.gender,
-  role: form.role,
-  photo: form.photo,
-  createdAt: new Date(),
-}),
-});
-
-
-if (form.role === "doctor") {
-  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/doctors`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      doctorName: form.name,
+  try {
+    // Better Auth Signup
+    const result = await signUp.email({
       email: form.email,
-      specialization: form.specialization,
-      qualifications: form.qualifications,
-      experience: form.experience,
-      consultationFee: Number(form.consultationFee),
-      hospitalName: form.hospitalName,
-      profileImage: form.photo,
-    }),
-  });
-}
+      password: form.password,
+      name: form.name,
+      image: form.photo || "",
+    });
 
-      setSuccess("Account created successfully!");
-
-      setTimeout(() => router.push("/"), 800);
-    } catch (err) {
-  console.error(err);
-  setError(err.message || "Something went wrong");
-} finally {
-      setLoading(false);
+    if (result.error) {
+      setError(result.error.message);
+      return;
     }
-  };
+
+    // Save User
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        gender: form.gender,
+        role: form.role,
+        photo: form.photo,
+      }),
+    });
+
+    // Doctor profile should NOT be created here
+    // Create it after login from Doctor Dashboard
+
+    setSuccess("Account created successfully!");
+
+    setTimeout(() => {
+      router.push("/login");
+    }, 1000);
+  } catch (err) {
+    console.error(err);
+    setError(err.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-zinc-50 px-4">
@@ -238,7 +202,6 @@ if (form.role === "doctor") {
             >
               <option value="patient">Patient</option>
               <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
             </select>
           </TextField>
 
